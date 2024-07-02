@@ -8,7 +8,7 @@ import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/Feather';
 import * as Progress from 'react-native-progress';
 import CheckBox from '@react-native-community/checkbox';
-
+import Navbar from '../components/Navbar';
 
 function AddIcon(){
 
@@ -24,23 +24,62 @@ export default function Dashboard() {
   const [checkState,setCheckState] = useState(false);
 
   return (
-    <ScrollView style={styles.container}>
+    <>
+      <View  style={styles.container}>
+      <ScrollView>
       <Text style={styles.habitsHeading}>Habits <AddIcon /></Text>
       <View style={styles.progressBar}>
       <Progress.Bar color='#8860D0' unfilledColor='white' borderRadius={10} progress={0.3} width={350} height={15} />
       <View style={styles.progressInfo}>
       <Text style={styles.progressInfoTxt}>30% completed</Text>
       </View>
+      </View>
       <View style={styles.tasks}>
-        <CheckBox
-          value={checkState}
-          onValueChange={()=>{setCheckState(prev=>!prev)}}
-          style={styles.checkBox}
-          tintColors={{true:'#8860D0',false:'#8860D0'}}
-        />
+        <View style={[styles.task,styles.taskBorder]}>
+            <CheckBox
+              value={checkState}
+              onValueChange={()=>{setCheckState(prev=>!prev)}}
+              style={styles.checkBox}
+              tintColors={{true:'#8860D0',false:'#8860D0'}}
+            />
+            <Text>Read Books</Text>
+        </View>
+        <View style={styles.task}>
+            <CheckBox
+              value={checkState}
+              onValueChange={()=>{setCheckState(prev=>!prev)}}
+              style={styles.checkBox}
+              tintColors={{true:'#8860D0',false:'#8860D0'}}
+            />
+            <Text>Read Books</Text>
+        </View>
       </View>
+      <View style={styles.completedTasks}>
+        <Text>Completed</Text>
+          <View style={[styles.task,styles.taskBorder]}>
+              <CheckBox
+                value={!checkState}
+                onValueChange={()=>{setCheckState(prev=>!prev)}}
+                style={styles.checkBox}
+                tintColors={{true:'#8860D0',false:'#8860D0'}}
+              />
+              <Text>Read Books</Text>
+          </View>
+          <View style={styles.task}>
+              <CheckBox
+                value={!checkState}
+                onValueChange={()=>{setCheckState(prev=>!prev)}}
+                style={styles.checkBox}
+                tintColors={{true:'#8860D0',false:'#8860D0'}}
+              />
+              <Text>Read Books</Text>
+          </View>
+        </View>
+      </ScrollView>
+      <Navbar />
       </View>
-    </ScrollView>
+    </>
+
   )
 }
 
@@ -53,6 +92,7 @@ const styles = StyleSheet.create({
     paddingVertical:40
   },
   container:{
+    position:'relative',
     backgroundColor:'#E1D9F0',
     flex:1
   },
@@ -72,6 +112,29 @@ const styles = StyleSheet.create({
   },
   checkBox:{
   
+  },
+  tasks:{
+    alignItems:'flex-start',
+    backgroundColor:'white',
+    padding:20,
+    margin:20,
+    borderRadius:20
+  },
+  task:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'flex-start',
+    padding:10
+  },
+  taskBorder:{
+    width:'100%',
+    borderBottomWidth:1,
+    borderBottomColor:'#D4D4D4'
+  },
+  completedTasks:{
+    padding:20,
+    margin:20,
   }
+
 
 })
