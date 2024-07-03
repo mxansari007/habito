@@ -2,82 +2,151 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  Button,
+  Pressable,
+  Touchable,
+  TouchableOpacity,
+  TextInput,
+  Async
  } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/Feather';
 import * as Progress from 'react-native-progress';
 import CheckBox from '@react-native-community/checkbox';
 import Navbar from '../components/Navbar';
+import Modal from "react-native-modal";
+import MyInput from '../components/MyInput';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function AddIcon(){
+function AddIcon({onPress}:{onPress:()=>void}){
 
   return (
     <>
+    <TouchableOpacity onPress={onPress}>
     <Icon  name="plus-square" size={30} color="gray" />
+    </TouchableOpacity>
     </>
   )
 }
 
 export default function Dashboard() {
 
+
+
+
   const [checkState,setCheckState] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isFocused,setFocused] = useState(false);
+  const [habit,setHabit] = useState<String>('');
+  const [habits,setHabits] = useState<Array<Object>>([]);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  useEffect(()=>{
+    ;(async ()=>{
+      try {
+        const value = await AsyncStorage.getItem('habits')
+        if(value !== null) {
+          // value previously stored
+          setHabits(JSON.parse(value));
+        }
+      } catch(e) {
+        // error reading value
+        console.log(e);
+      }
+    })()
+  },[])
+
+
+  const storeData = async (value: Array<Object>) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('habits', jsonValue)
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  }
+
+
+  const addHabits = ()=>{
+    const date = new Date();
+    setHabits([...habits,{habitName:habit,completed:false,date:date.toLocaleDateString()}]);
+    storeData([...habits,{habitName:habit,completed:false,date:date.toLocaleDateString()}]);
+    toggleModal();
+  }
+
+
+  const changeHabitState = (id:number)=>{
+    const newHabits = habits.map((d,i)=>{
+      if(i===id){
+        return {...d,completed:!d.completed}
+      }
+      return d;
+    })
+    setHabits(newHabits);
+    storeData(newHabits);
+  }
+
 
   return (
     <>
       <View  style={styles.container}>
-      <ScrollView>
-      <Text style={styles.habitsHeading}>Habits <AddIcon /></Text>
+      <Text style={styles.habitsHeading}>Habits <AddIcon onPress={toggleModal} /></Text>
       <View style={styles.progressBar}>
       <Progress.Bar color='#8860D0' unfilledColor='white' borderRadius={10} progress={0.3} width={350} height={15} />
       <View style={styles.progressInfo}>
       <Text style={styles.progressInfoTxt}>30% completed</Text>
       </View>
       </View>
+      <ScrollView style={{maxHeight:300,borderRadius:20,marginTop:20}}>
       <View style={styles.tasks}>
-        <View style={[styles.task,styles.taskBorder]}>
+        {(habits.filter(x=>!x.completed)).map((d,id)=><View key={id} style={[styles.task,styles.taskBorder]}>
             <CheckBox
-              value={checkState}
-              onValueChange={()=>{setCheckState(prev=>!prev)}}
+              value={d.completed}
+              onValueChange={()=>{changeHabitState(id)}}
               style={styles.checkBox}
               tintColors={{true:'#8860D0',false:'#8860D0'}}
             />
-            <Text>Read Books</Text>
-        </View>
-        <View style={styles.task}>
-            <CheckBox
-              value={checkState}
-              onValueChange={()=>{setCheckState(prev=>!prev)}}
-              style={styles.checkBox}
-              tintColors={{true:'#8860D0',false:'#8860D0'}}
-            />
-            <Text>Read Books</Text>
-        </View>
+            <Text>{d.habitName}</Text>
+        </View>)}
       </View>
-      <View style={styles.completedTasks}>
-        <Text>Completed</Text>
-          <View style={[styles.task,styles.taskBorder]}>
-              <CheckBox
-                value={!checkState}
-                onValueChange={()=>{setCheckState(prev=>!prev)}}
-                style={styles.checkBox}
-                tintColors={{true:'#8860D0',false:'#8860D0'}}
-              />
-              <Text>Read Books</Text>
-          </View>
-          <View style={styles.task}>
-              <CheckBox
-                value={!checkState}
-                onValueChange={()=>{setCheckState(prev=>!prev)}}
-                style={styles.checkBox}
-                tintColors={{true:'#8860D0',false:'#8860D0'}}
-              />
-              <Text>Read Books</Text>
-          </View>
-        </View>
       </ScrollView>
+        <Text>Completed</Text>
+      <ScrollView style={{maxHeight:200}}>
+      <View style={styles.completedTasks}>
+          {(habits.filter(x=>x.completed)).map((d,id)=><View keys={id} style={[styles.task,styles.taskBorder]}>
+              <CheckBox
+                value={d.completed}
+                onValueChange={()=>{setCheckState(prev=>!prev)}}
+                style={styles.checkBox}
+                tintColors={{true:'#8860D0',false:'#8860D0'}}
+              />
+              <Text>{d.habitName}</Text>
+          </View>)}
+        </View>
+        </ScrollView>
       <Navbar />
       </View>
+      <Modal isVisible={isModalVisible}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalHeading}>Add Habit</Text>
+              <MyInput 
+              style={styles.modalInput} 
+              onFocus={()=>setFocused(true)}
+              onBlur={()=>setFocused(false)}
+              isFocused={isFocused}
+              onChangeText={(text:String)=>setHabit(text)}
+              />
+              <View style={styles.modalButtons}>
+              <Button title="Add" onPress={addHabits} />
+              <Button title="Close" onPress={toggleModal} />
+              </View>
+          </View>
+      </Modal>
     </>
 
   )
@@ -134,7 +203,32 @@ const styles = StyleSheet.create({
   completedTasks:{
     padding:20,
     margin:20,
+  },
+  modalContainer:{
+    backgroundColor:'white',
+    padding: 20, 
+    borderRadius: 20
+  },
+  modalHeading:{
+    fontFamily:'Quicksand-Bold',
+    fontSize:20,
+    color:'black',
+    marginBottom:20
+  },
+  modalInput:{
+    borderBottomWidth:2,
+    paddingHorizontal:10,
+    paddingVertical:10,
+    marginBottom:20
+  },
+  modalButtons:{
+    flexDirection:'row',
+    justifyContent:'space-around'
+  },
+  btn:{
+    padding:10,
+    borderRadius:5,
+    backgroundColor:'#8860D0',
+    color:'white'
   }
-
-
 })
