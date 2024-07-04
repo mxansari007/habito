@@ -20,6 +20,15 @@ import MyInput from '../components/MyInput';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+type Habit = {
+  habitId:number,
+  habitName:String,
+  completed:boolean,
+  date:String
+}
+
+
 function AddIcon({onPress}:{onPress:()=>void}){
 
   return (
@@ -58,6 +67,7 @@ export default function Dashboard() {
         console.log(e);
       }
     })()
+
   },[])
 
 
@@ -74,8 +84,8 @@ export default function Dashboard() {
 
   const addHabits = ()=>{
     const date = new Date();
-    setHabits([...habits,{habitName:habit,completed:false,date:date.toLocaleDateString()}]);
-    storeData([...habits,{habitName:habit,completed:false,date:date.toLocaleDateString()}]);
+    setHabits([...habits,{habitId:habits.length,habitName:habit,completed:false,date:date.toLocaleDateString()}]);
+    storeData([...habits,{habitId:habits.length,habitName:habit,completed:false,date:date.toLocaleDateString()}]);
     toggleModal();
   }
 
@@ -104,10 +114,10 @@ export default function Dashboard() {
       </View>
       <ScrollView style={{maxHeight:300,borderRadius:20,marginTop:20}}>
       <View style={styles.tasks}>
-        {(habits.filter(x=>!x.completed)).map((d,id)=><View key={id} style={[styles.task,styles.taskBorder]}>
+        {(habits.filter(x=>!x.completed)).map((d)=><View key={d.habitId} style={[styles.task,styles.taskBorder]}>
             <CheckBox
               value={d.completed}
-              onValueChange={()=>{changeHabitState(id)}}
+              onValueChange={()=>{changeHabitState(d.habitId)}}
               style={styles.checkBox}
               tintColors={{true:'#8860D0',false:'#8860D0'}}
             />
@@ -115,10 +125,10 @@ export default function Dashboard() {
         </View>)}
       </View>
       </ScrollView>
-        <Text>Completed</Text>
+        <Text style={styles.headingTxt}>Completed</Text>
       <ScrollView style={{maxHeight:200}}>
       <View style={styles.completedTasks}>
-          {(habits.filter(x=>x.completed)).map((d,id)=><View keys={id} style={[styles.task,styles.taskBorder]}>
+          {(habits.filter(x=>x.completed)).map((d)=><View keys={d.habitId} style={[styles.task,styles.taskBorder]}>
               <CheckBox
                 value={d.completed}
                 onValueChange={()=>{setCheckState(prev=>!prev)}}
@@ -230,5 +240,12 @@ const styles = StyleSheet.create({
     borderRadius:5,
     backgroundColor:'#8860D0',
     color:'white'
+  },
+  headingTxt:{
+    fontFamily:'Quicksand-Bold',
+    fontSize:20,
+    color:'black',
+    paddingHorizontal:20,
+    marginTop:10
   }
 })

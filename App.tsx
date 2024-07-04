@@ -13,7 +13,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Home from './screens/Home'
 import Dashboard from './screens/Dashboard'
-
+import CreateAccount from './screens/CreateAccount'
 
 type RootStackParamList = {
   Home: undefined
@@ -39,6 +39,12 @@ const App = ():JSX.Element =>{
       <Stack.Screen
       name="Dashboard"
       component={Dashboard}
+      options={{headerShown:false}}
+      />
+
+      <Stack.Screen
+      name="CreateAccount"
+      component={CreateAccount}
       options={{headerShown:false}}
       />
 

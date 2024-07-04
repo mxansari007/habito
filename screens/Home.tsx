@@ -50,6 +50,7 @@ export default function Home({navigation}) {
 
         <Text  style={styles.createAccountTxt}>Create your Account 
             <Text
+            onPress={()=>navigation.push('CreateAccount')}
             style={{color:'#8860D0'}}> Click Here</Text>
           </Text>
       </View>

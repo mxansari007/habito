@@ -2,13 +2,14 @@ import {
     View, 
     Text,
     StyleSheet,
-    Image 
+    Image, 
+    Pressable
 } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/Feather';
 import Vec1 from '../assets/images/Vector1.png';
 import Vec2 from '../assets/images/Vector2.png';
-
+import { useNavigation } from '@react-navigation/native';
 
 
 const AddIcon = ({name,active}:{name:string,active:boolean})=>{
@@ -23,13 +24,19 @@ const AddIcon = ({name,active}:{name:string,active:boolean})=>{
 
 
 export default function Navbar() {
+
+  const navigation = useNavigation();
+
+  
   return (
     <View style={styles.navContainer}>
     <View style={styles.innerContainer}>
     <View style={styles.outerBtn}>
-      <View style={[styles.Btn,false?styles.BtnActive:{}]}>
+      <Pressable onPress={()=>{
+        navigation.navigate('Dashboard');
+      }} style={[styles.Btn,false?styles.BtnActive:{}]}>
         <AddIcon name="home" active={false} />
-      </View>
+      </Pressable>
       <Image style={{position:'absolute',top:7,left:76,zIndex:-1}} source={Vec1} />
       <Image style={{position:'absolute',bottom:7,left:76}} source={Vec2} />
       </View>
