@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   View,
   Text,
@@ -14,16 +14,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Home from './screens/Home'
 import Dashboard from './screens/Dashboard'
 import CreateAccount from './screens/CreateAccount'
-
+import {AppwriteContext} from './appwrite/AppwriteContext.tsx'
 type RootStackParamList = {
   Home: undefined
 }
+
+
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const App = ():JSX.Element =>{
 
   const isDarkMode = useColorScheme() === 'dark'
+  const {appwrite}= useContext(AppwriteContext)
+
 
   return(
 

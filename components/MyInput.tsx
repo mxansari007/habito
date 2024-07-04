@@ -1,7 +1,7 @@
 import { View, Text,TextInput,StyleSheet } from 'react-native'
 import React from 'react'
 
-export default function MyInput({onFocus,onBlur,ref,onChangeText,isFocused,style}:any) {
+export default function MyInput({placeholder,keyboardType,onFocus,onBlur,ref,onChangeText,isFocused,style}:any) {
 
 
 
@@ -10,8 +10,8 @@ export default function MyInput({onFocus,onBlur,ref,onChangeText,isFocused,style
     <TextInput
     style={[styles.Input,{borderBottomColor:isFocused?'#8860D0':'black'},style]} 
     onChangeText={onChangeText}
-    placeholder='Enter Your Phone Number'
-    keyboardType='numeric'
+    placeholder={placeholder}
+    keyboardType={keyboardType}
     onFocus={onFocus}
     onBlur={onBlur}
     ref={ref}

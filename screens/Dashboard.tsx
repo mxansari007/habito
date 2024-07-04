@@ -8,7 +8,8 @@ import {
   Touchable,
   TouchableOpacity,
   TextInput,
-  Async
+  KeyboardAvoidingView,
+  Platform
  } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/Feather';
@@ -104,7 +105,8 @@ export default function Dashboard() {
 
   return (
     <>
-      <View  style={styles.container}>
+    <KeyboardAvoidingView 
+    behavior={Platform.OS === 'ios' ? 'padding':'height'} style={styles.container}>
       <Text style={styles.habitsHeading}>Habits <AddIcon onPress={toggleModal} /></Text>
       <View style={styles.progressBar}>
       <Progress.Bar color='#8860D0' unfilledColor='white' borderRadius={10} progress={0.3} width={350} height={15} />
@@ -140,7 +142,7 @@ export default function Dashboard() {
         </View>
         </ScrollView>
       <Navbar />
-      </View>
+      </KeyboardAvoidingView>
       <Modal isVisible={isModalVisible}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalHeading}>Add Habit</Text>
