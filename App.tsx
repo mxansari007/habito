@@ -14,13 +14,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Home from './screens/Home'
 import Dashboard from './screens/Dashboard'
 import CreateAccount from './screens/CreateAccount'
-import {AppwriteContext} from './appwrite/AppwriteContext.tsx'
+import {AppwriteContext} from './appwrite/AppwriteContext.tsx';
+import { RealmProvider } from '@realm/react'
 type RootStackParamList = {
   Home: undefined
 }
-
-
-
+import { AppProvider } from '@realm/react'
+import realm from './db/user.ts'
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const App = ():JSX.Element =>{
@@ -30,7 +30,7 @@ const App = ():JSX.Element =>{
 
 
   return(
-
+    <AppProvider id="data-nftjm">
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'> 
 
@@ -54,8 +54,7 @@ const App = ():JSX.Element =>{
 
       </Stack.Navigator>
     </NavigationContainer>
-
-
+    </AppProvider>
   )
 }
 

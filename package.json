@@ -2,6 +2,7 @@
   "name": "habittracker",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -16,6 +17,7 @@
     "@react-navigation/native-stack": "^6.10.0",
     "@realm/react": "^0.8.0",
     "appwrite": "^15.0.0",
+    "bson": "^6.8.0",
     "react": "18.2.0",
     "react-native": "0.74.2",
     "react-native-config": "^1.5.2",
