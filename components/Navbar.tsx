@@ -5,7 +5,7 @@ import {
     Image, 
     Pressable
 } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import Icon from 'react-native-vector-icons/Feather';
 import Vec1 from '../assets/images/Vector1.png';
 import Vec2 from '../assets/images/Vector2.png';
@@ -26,6 +26,7 @@ const AddIcon = ({name,active}:{name:string,active:boolean})=>{
 export default function Navbar() {
 
   const navigation = useNavigation();
+  const [option,setOption] = useState(1);
 
   
   return (
@@ -33,22 +34,28 @@ export default function Navbar() {
     <View style={styles.innerContainer}>
     <View style={styles.outerBtn}>
       <Pressable onPress={()=>{
+        setOption(1);
         navigation.navigate('Dashboard');
-      }} style={[styles.Btn,false?styles.BtnActive:{}]}>
-        <AddIcon name="home" active={false} />
+      }} style={[styles.Btn,option===1?styles.BtnActive:{}]}>
+        <AddIcon name="home" active={option===1?true:false} />
       </Pressable>
       <Image style={{position:'absolute',top:7,left:76,zIndex:-1}} source={Vec1} />
       <Image style={{position:'absolute',bottom:7,left:76}} source={Vec2} />
       </View>
       <View style={[styles.outerBtn,styles.outerRelative]}>
-      <View style={[styles.Btn,true?styles.BtnActive:{}]}>
-        <AddIcon name="book" active={true} />
-      </View>
+      <Pressable style={[styles.Btn,option===2?styles.BtnActive:{}]}>
+        <AddIcon name="book" active={option===2?true:false} />
+      </Pressable>
       </View>
       <View style={[styles.outerBtn,styles.outerRelative2]}>
-      <View style={[styles.Btn,false?styles.BtnActive:{}]}>
-        <AddIcon name="home" active={false} />
-      </View>
+      <Pressable 
+      onPress={()=>{
+        setOption(3);
+        navigation.navigate('Setting');
+      }}
+      style={[styles.Btn,option===3?styles.BtnActive:{}]}>
+        <AddIcon name="settings" active={option===3?true:false} />
+      </Pressable>
       <Image style={{position:'absolute',top:10,right:76}} source={Vec1} />
       <Image style={{position:'absolute',bottom:10,right:76}} source={Vec2} />
       </View>

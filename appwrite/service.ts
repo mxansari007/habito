@@ -9,6 +9,12 @@ const appwWriteClient = new Client();
 const APPWRITE_ENDPOINT:string = 'https://cloud.appwrite.io/v1';
 const APPWRITE_PROJECT_ID:string = '668638890017c55c3935';
 
+type Habit = {
+    userId:string,
+    name:string,
+    isCompleted:boolean,
+}
+
 class AppwriteService {
     account;
     database;
@@ -102,6 +108,38 @@ class AppwriteService {
         }
     }
 
+
+
+    async createHabit (habit: Habit,userId:string) {
+
+        try{
+
+            const habitRecord = await this.database.createDocument(
+                '6689077d00108f73b7d8',
+                '668921ff0032ae97ac11',
+                userId,
+                {
+                    name:habit.name,
+                    isCompleted:habit.isCompleted
+                }
+            )
+
+            if(habitRecord){
+                Snackbar.show({
+                    text:'Habit Created Successfully',
+                    duration:Snackbar.LENGTH_SHORT
+                })
+                return habitRecord;
+            }
+
+
+        }catch(error){
+
+            console.log("Appwrite Service :: createHabit :: error" + error);
+            return null;
+
+        }
+    }
 
 
 }

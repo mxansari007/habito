@@ -7,7 +7,7 @@ import React, { useContext, useState } from 'react'
 import MyInput from '../components/MyInput'
 import MyButton from '../components/MyButton'
 import {AppwriteContext} from '../appwrite/AppwriteContext'
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
 type UserAccount = {
   $id:string,
   $createdAt:Date,
@@ -53,9 +53,9 @@ export default function CreateAccount({navigation}) {
     <View style={styles.container}>
       <Text style={styles.headingTxt}>Create Account</Text>
       <View style={styles.inputArea}>
-        <MyInput keyboardType="text" onChangeText={(e) => setName(e)} placeholder="Name" />
+        <MyInput style={styles.input} keyboardType="text" onChangeText={(e) => setName(e)} placeholder="Name" />
         {/* Consider handling the phone number prefix outside of the onChangeText if needed */}
-        <MyInput keyboardType="numeric" onChangeText={(e) => setPhone('+91'+e)} placeholder="Phone Number" />
+        <MyInput style={styles.input} keyboardType="numeric" onChangeText={(e) => setPhone('+91'+e)} placeholder="Phone Number" />
         <MyButton onPress={handleSubmit} title="Create Account" />
       </View>
     </View>
@@ -90,6 +90,9 @@ const styles = StyleSheet.create({
     alignItems:'center',
     marginTop:20,
     paddingHorizontal:20
+  },
+  input:{
+    width:'100%',
   }
 
 })

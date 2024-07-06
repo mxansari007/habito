@@ -20,7 +20,8 @@ import Modal from "react-native-modal";
 import MyInput from '../components/MyInput';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { AppwriteContext } from '../appwrite/AppwriteContext';
+import { useContext } from 'react';
 
 type Habit = {
   habitId:number,
@@ -51,6 +52,10 @@ export default function Dashboard() {
   const [isFocused,setFocused] = useState(false);
   const [habit,setHabit] = useState<String>('');
   const [habits,setHabits] = useState<Array<Object>>([]);
+  const {appwrite} = useContext(AppwriteContext);
+
+
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };

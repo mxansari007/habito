@@ -15,7 +15,7 @@ import Home from './screens/Home'
 import Dashboard from './screens/Dashboard'
 import CreateAccount from './screens/CreateAccount'
 import {AppwriteContext} from './appwrite/AppwriteContext.tsx';
-
+import Setting from './screens/Setting.tsx'
 type RootStackParamList = {
   Home: undefined
 }
@@ -50,6 +50,11 @@ const App = ():JSX.Element =>{
       options={{headerShown:false}}
       />
 
+      <Stack.Screen
+      name="Setting"
+      component={Setting}
+      options={{headerShown:false}}
+      />
       </Stack.Navigator>
     </NavigationContainer>
   )
