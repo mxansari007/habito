@@ -2,7 +2,6 @@
   "name": "habittracker",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -15,7 +14,6 @@
     "@react-native-community/checkbox": "^0.5.17",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.10.0",
-    "@realm/react": "^0.8.0",
     "appwrite": "^15.0.0",
     "bson": "^6.8.0",
     "react": "18.2.0",
@@ -27,7 +25,6 @@
     "react-native-screens": "^3.32.0",
     "react-native-snackbar": "^2.6.2",
     "react-native-vector-icons": "^10.1.0",
-    "realm": "^12.11.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {

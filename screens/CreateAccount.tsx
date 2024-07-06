@@ -37,8 +37,9 @@ export default function CreateAccount({navigation}) {
     console.log(userAccount);
     console.log('clicked')
     if(userAccount){
-    appwrite.verifyOTP({UserAccount:userAccount,otp:otp}).then(d=>console.log(d))
+    appwrite.verifyOTP({UserAccount:userAccount,otp:otp,name,phone}).then(d=>console.log(d))
     .catch(e=>console.log(e));
+    navigation.navigate('Dashboard')
     }else{
       console.log('User Account not found')
     }

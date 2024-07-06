@@ -1,4 +1,4 @@
-import { ID,Account, Client } from 'appwrite'
+import { ID,Account, Databases,Client } from 'appwrite'
 import Config from 'react-native-config'
 
 import Snackbar from 'react-native-snackbar'
@@ -11,6 +11,7 @@ const APPWRITE_PROJECT_ID:string = '668638890017c55c3935';
 
 class AppwriteService {
     account;
+    database;
 
     constructor() {
         appwWriteClient
@@ -18,23 +19,24 @@ class AppwriteService {
             .setProject(APPWRITE_PROJECT_ID)
 
         this.account = new Account(appwWriteClient)
+        this.database = new Databases(appwWriteClient)
     }
 
 
     //create a new record
 
-    async createRecord({phone,name}:any){
+    async createRecord({phone,name}:{phone:string,name:string}){
         console.log(phone)
         try {
             const userAccount = await this.account.createPhoneToken(
                 ID.unique(),
                 '+919457077164',
-            )
+            );
 
         
             if(userAccount){
                 Snackbar.show({
-                    text:'Account Created Successfully',
+                    text:'OTP Sent Successfully',
                     duration:Snackbar.LENGTH_SHORT
                 })
                 return userAccount;
@@ -57,19 +59,31 @@ class AppwriteService {
     }
 
 
-    async verifyOTP({UserAccount,otp}:any){
+    async verifyOTP({UserAccount,otp,name,phone}:any){
         try {
             const userAccount = await this.account.createSession(
                 UserAccount.userId,
                 otp,
             )
+
+            
             if(userAccount){
+                const user = await this.database.createDocument(
+                    '6689077d00108f73b7d8',
+                    '668907bd001b4b65ce5e',
+                    userAccount.userId,
+                    {
+                        name:name,
+                        phone:phone,
+                    }
+                );
+                console.log(user);
+
                 Snackbar.show({
-                    text:'OTP Verified Successfully',
+                    text:'Account Created Successfully',
                     duration:Snackbar.LENGTH_SHORT
                 })
-                const token = await this.account.createJWT();
-                return token;
+                return user;
             }else{
                 Snackbar.show({
                     text:'Failed to verify OTP',
