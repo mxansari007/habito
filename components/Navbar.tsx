@@ -23,7 +23,7 @@ const AddIcon = ({name,active}:{name:string,active:boolean})=>{
 
 
 
-export default function Navbar() {
+export default function Navbar({route}:{route:string}) {
 
   const navigation = useNavigation();
   const [option,setOption] = useState(1);
@@ -36,15 +36,15 @@ export default function Navbar() {
       <Pressable onPress={()=>{
         setOption(1);
         navigation.navigate('Dashboard');
-      }} style={[styles.Btn,option===1?styles.BtnActive:{}]}>
-        <AddIcon name="home" active={option===1?true:false} />
+      }} style={[styles.Btn,route==="Dashboard"?styles.BtnActive:{}]}>
+        <AddIcon name="home" active={route==="Dashboard"?true:false} />
       </Pressable>
       <Image style={{position:'absolute',top:7,left:76,zIndex:-1}} source={Vec1} />
       <Image style={{position:'absolute',bottom:7,left:76}} source={Vec2} />
       </View>
       <View style={[styles.outerBtn,styles.outerRelative]}>
-      <Pressable style={[styles.Btn,option===2?styles.BtnActive:{}]}>
-        <AddIcon name="book" active={option===2?true:false} />
+      <Pressable style={[styles.Btn,route===""?styles.BtnActive:{}]}>
+        <AddIcon name="book" active={route===""?true:false} />
       </Pressable>
       </View>
       <View style={[styles.outerBtn,styles.outerRelative2]}>
@@ -53,8 +53,8 @@ export default function Navbar() {
         setOption(3);
         navigation.navigate('Setting');
       }}
-      style={[styles.Btn,option===3?styles.BtnActive:{}]}>
-        <AddIcon name="settings" active={option===3?true:false} />
+      style={[styles.Btn,route==="Setting"?styles.BtnActive:{}]}>
+        <AddIcon name="settings" active={route==="Setting"?true:false} />
       </Pressable>
       <Image style={{position:'absolute',top:10,right:76}} source={Vec1} />
       <Image style={{position:'absolute',bottom:10,right:76}} source={Vec2} />
@@ -85,17 +85,18 @@ const styles = StyleSheet.create({
         height:80,
         alignItems:'center',
         backgroundColor:'white',
-        justifyContent:'center'
+        justifyContent:'center',
+ 
     },
     BtnActive:{
         backgroundColor:'#8860D0',
-        zIndex:100
+        zIndex:1000
     },
     outerBtn:{
         backgroundColor:'white',
         padding:10,
         borderRadius:50,
-        zIndex:-1
+        zIndex:100
     },
     outerRelative:{
         position:'relative',

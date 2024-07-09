@@ -1,4 +1,4 @@
-import { ID,Account, Databases,Client } from 'appwrite'
+import { ID,Account, Databases,Client, Query } from 'appwrite'
 import Config from 'react-native-config'
 
 import Snackbar from 'react-native-snackbar'
@@ -32,7 +32,6 @@ class AppwriteService {
     //create a new record
 
     async createRecord({phone,name}:{phone:string,name:string}){
-        console.log(phone)
         try {
             const userAccount = await this.account.createPhoneToken(
                 ID.unique(),
@@ -107,6 +106,73 @@ class AppwriteService {
             return null;    
         }
     }
+
+    async createMySession ({otp,userId}:{otp:string,userId:string}) {
+
+        try{
+
+            const userAccount = await this.account.createSession(
+                userId,
+                otp
+            )
+
+            if(userAccount){
+                Snackbar.show({
+                    text:'Login Successful',
+                    duration:Snackbar.LENGTH_SHORT
+                })
+                return userAccount;
+            }else{
+                Snackbar.show({
+                    text:'Failed to create session',
+                    duration:Snackbar.LENGTH_SHORT
+                })
+                return null;
+            }
+
+        }catch(error){
+
+            console.log("Appwrite Service :: createMySession :: error" + error);
+            return null;
+
+        }
+    }
+
+    async checkUser (phone:string) {
+
+        try{
+            
+            const user = await this.database.listDocuments(
+                '6689077d00108f73b7d8',
+                '668907bd001b4b65ce5e',
+                [
+                    Query.equal('phone',[phone])
+                ])
+
+            return user;
+        }
+        catch(error){
+                
+                console.log("Appwrite Service :: checkUser :: error" + error);
+                return null;
+    
+            }
+    }
+
+    async deleteSession () {
+
+        try{
+            const res = await this.account.deleteSession('current')
+            return res;
+        }catch(error){
+                
+                console.log("Appwrite Service :: deleteSession :: error" + error);
+                return null;
+    
+            }
+
+    }
+
 
 
 

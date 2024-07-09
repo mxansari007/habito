@@ -7,17 +7,68 @@ import {
   TextInputProps,
   Pressable
 } from 'react-native'
-import React,{useRef,useState} from 'react'
+import React,{useRef,useState,useContext, useEffect} from 'react'
 import habitImage from '../assets/images/arrows.png';
-
+import MyInput from '../components/MyInput';
+import {AppwriteContext} from '../appwrite/AppwriteContext';
+import Snackbar from 'react-native-snackbar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Home({navigation}) {
 
   const phoneRef = useRef<TextInputProps | undefined>();
   const [isPhoneFocused,setPhoneFocused] = useState<boolean>(false);
+  const [isOtp,setIsOtp] = useState<boolean>(false);
+  const [step,setStep] = useState<number>(1);
+  const [phone,setPhone] = useState<string>('');
+  const [otp,setOtp] = useState<string>('');
+  const {appwrite} = useContext(AppwriteContext);
+  const [userId,setUserId] = useState<string>('');
+
+  useEffect(()=>{
+    setStep(1);
+  }
+  ,[]);
 
 
-  const changeNumber =()=>{
+
+
+  const changeNumber =(e:string)=>{
+    setPhone('+91'+e);
+  }
+
+  const changeOtp =(e:string)=>{
+    setOtp(e);
+  }
+
+  const handleLogin = ()=>{
+    appwrite.createMySession({otp,userId})
+    .then(async (r)=>{
+      console.log(r)
+      await AsyncStorage.setItem('User',JSON.stringify(r));
+      navigation.replace('Dashboard');
+    
+    })
+    .catch(e=>console.log(e));
+  }
+
+  const handleOTP = ()=>{
+    appwrite.checkUser(phone).then((r)=>{
+      console.log(r);
+      if(r?.documents.length==0){
+        setUserId(r?.documents[0].userId);
+        Snackbar.show({
+          text:'User not found',
+          duration:Snackbar.LENGTH_LONG,
+          backgroundColor:'#8860D0'
+        })
+      }
+      else{
+        appwrite.createRecord({phone}).then((r)=>console.log(r))
+        setStep(2);
+      }
+    }).catch(e=>console.log(e));
+
   }
 
 
@@ -32,7 +83,8 @@ export default function Home({navigation}) {
       <Text style={styles.logoText}>Habit Tracker</Text>
       </View>
       <View style={styles.inputs}>
-      <TextInput
+     
+     {step===1?<TextInput
         style={[styles.phoneInput,{borderBottomColor:isPhoneFocused?'#8860D0':'black'}]} 
         onChangeText={changeNumber}
         placeholder='Enter Your Phone Number'
@@ -40,19 +92,39 @@ export default function Home({navigation}) {
         onFocus={()=>setPhoneFocused(true)}
         onBlur={()=>setPhoneFocused(false)}
         ref={phoneRef}
-        />
+        />:null}
 
-        <Pressable style={styles.loginBtn}
-          onPress={()=>navigation.push('Dashboard')}
+        {step===2?<MyInput 
+        placeholder="Enter OTP" 
+        onChangeText={changeOtp}
+        isFocused={isOtp}
+        onFocus={()=>setIsOtp(true)}
+        onBlur={()=>setIsOtp(false)}
+        keyboardType="numeric"
+        secureTextEntry={true}
+        style={styles.optInput}
+        />:null}
+
+
+
+{step===1?<Pressable style={styles.loginBtn}
+          onPress={()=>handleOTP()}
+        >
+          <Text style={styles.loginBtnTxt}>Send OTP</Text>
+        </Pressable>:null}
+
+{step===2?<Pressable style={styles.loginBtn}
+          onPress={()=>handleLogin()}
         >
           <Text style={styles.loginBtnTxt}>Login</Text>
-        </Pressable>
+        </Pressable>:null}
 
         <Text  style={styles.createAccountTxt}>Create your Account 
             <Text
             onPress={()=>navigation.push('CreateAccount')}
             style={{color:'#8860D0'}}> Click Here</Text>
           </Text>
+     
       </View>
     </View>
   )
@@ -97,6 +169,7 @@ phoneInput:{
   marginTop:20,
   borderBottomWidth:2,
   paddingHorizontal:10,
+  width:'80%',
 },
 inputs:{
   marginTop:80,
@@ -120,7 +193,10 @@ loginBtnTxt:{
 createAccountTxt:{
   marginTop:20,
 
-}
+},
+optInput:{
+ width:'80%'
+},
   
 })
 

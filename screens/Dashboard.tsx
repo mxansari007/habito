@@ -22,11 +22,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppwriteContext } from '../appwrite/AppwriteContext';
 import { useContext } from 'react';
-
+import { useRoute } from '@react-navigation/native';
 type Habit = {
   habitId:number,
   habitName:String,
-  completed:boolean,
+  isCompleted:boolean,
   date:String
 }
 
@@ -46,14 +46,14 @@ export default function Dashboard() {
 
 
 
-
+  const route = useRoute();
   const [checkState,setCheckState] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isFocused,setFocused] = useState(false);
   const [habit,setHabit] = useState<String>('');
   const [habits,setHabits] = useState<Array<Object>>([]);
   const {appwrite} = useContext(AppwriteContext);
-
+  const [user,setUser] = useState<Object>({})
 
 
   const toggleModal = () => {
@@ -61,6 +61,7 @@ export default function Dashboard() {
   };
 
   useEffect(()=>{
+
     ;(async ()=>{
       try {
         const value = await AsyncStorage.getItem('habits')
@@ -90,8 +91,9 @@ export default function Dashboard() {
 
   const addHabits = ()=>{
     const date = new Date();
-    setHabits([...habits,{habitId:habits.length,habitName:habit,completed:false,date:date.toLocaleDateString()}]);
-    storeData([...habits,{habitId:habits.length,habitName:habit,completed:false,date:date.toLocaleDateString()}]);
+    setHabits([...habits,{habitId:habits.length,habitName:habit,isCompleted:false,date:date.toLocaleDateString()}]);
+    storeData([...habits,{habitId:habits.length,habitName:habit,isCompleted:false,date:date.toLocaleDateString()}]);
+    appwrite.createHabit({name:habit,isCompleted:false,date:date.toLocaleDateString()},);
     toggleModal();
   }
 
@@ -99,7 +101,7 @@ export default function Dashboard() {
   const changeHabitState = (id:number)=>{
     const newHabits = habits.map((d,i)=>{
       if(i===id){
-        return {...d,completed:!d.completed}
+        return {...d,isCompleted:!d.isCompleted}
       }
       return d;
     })
@@ -110,6 +112,7 @@ export default function Dashboard() {
 
   return (
     <>
+
     <KeyboardAvoidingView 
     behavior={Platform.OS === 'ios' ? 'padding':'height'} style={styles.container}>
       <Text style={styles.habitsHeading}>Habits <AddIcon onPress={toggleModal} /></Text>
@@ -121,9 +124,9 @@ export default function Dashboard() {
       </View>
       <ScrollView style={{maxHeight:300,borderRadius:20,marginTop:20}}>
       <View style={styles.tasks}>
-        {(habits.filter(x=>!x.completed)).map((d)=><View key={d.habitId} style={[styles.task,styles.taskBorder]}>
+        {(habits.filter(x=>!x.isCompleted)).map((d)=><View key={d.habitId} style={[styles.task,styles.taskBorder]}>
             <CheckBox
-              value={d.completed}
+              value={d.isCompleted}
               onValueChange={()=>{changeHabitState(d.habitId)}}
               style={styles.checkBox}
               tintColors={{true:'#8860D0',false:'#8860D0'}}
@@ -135,9 +138,9 @@ export default function Dashboard() {
         <Text style={styles.headingTxt}>Completed</Text>
       <ScrollView style={{maxHeight:200}}>
       <View style={styles.completedTasks}>
-          {(habits.filter(x=>x.completed)).map((d)=><View keys={d.habitId} style={[styles.task,styles.taskBorder]}>
+          {(habits.filter(x=>x.isCompleted)).map((d)=><View keys={d.habitId} style={[styles.task,styles.taskBorder]}>
               <CheckBox
-                value={d.completed}
+                value={d.isCompleted}
                 onValueChange={()=>{setCheckState(prev=>!prev)}}
                 style={styles.checkBox}
                 tintColors={{true:'#8860D0',false:'#8860D0'}}
@@ -146,7 +149,7 @@ export default function Dashboard() {
           </View>)}
         </View>
         </ScrollView>
-      <Navbar />
+      <Navbar route={route.name}/>
       </KeyboardAvoidingView>
       <Modal isVisible={isModalVisible}>
             <View style={styles.modalContainer}>
