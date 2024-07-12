@@ -31,11 +31,11 @@ class AppwriteService {
 
     //create a new record
 
-    async createRecord({phone,name}:{phone:string,name:string}){
+    async createRecord({phone}:{phone:string}){
         try {
             const userAccount = await this.account.createPhoneToken(
                 ID.unique(),
-                '+919457077164',
+                phone,
             );
 
         
@@ -62,6 +62,8 @@ class AppwriteService {
             return null;
         }
     }
+
+    
 
 
     async verifyOTP({UserAccount,otp,name,phone}:any){
@@ -108,6 +110,7 @@ class AppwriteService {
     }
 
     async createMySession ({otp,userId}:{otp:string,userId:string}) {
+        console.log(userId)
 
         try{
 

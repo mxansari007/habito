@@ -30,6 +30,11 @@ export default function Home({navigation}) {
   }
   ,[]);
 
+  useEffect(()=>{
+    appwrite.deleteSession().then(()=>console.log('Session Deleted')).catch(e=>console.log(e));
+  }
+  ,[]);
+
 
 
 
@@ -55,8 +60,7 @@ export default function Home({navigation}) {
   const handleOTP = ()=>{
     appwrite.checkUser(phone).then((r)=>{
       console.log(r);
-      if(r?.documents.length==0){
-        setUserId(r?.documents[0].userId);
+      if(!r){
         Snackbar.show({
           text:'User not found',
           duration:Snackbar.LENGTH_LONG,
@@ -64,6 +68,8 @@ export default function Home({navigation}) {
         })
       }
       else{
+        console.log(r?.documents[0].$id);
+        setUserId(r?.documents[0].$id);
         appwrite.createRecord({phone}).then((r)=>console.log(r))
         setStep(2);
       }

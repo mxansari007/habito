@@ -23,7 +23,7 @@ const Setting = ({navigation}) => {
 
   const handleLogout = ()=>{
     appwrite.deleteSession().then(()=>{
-      navigation.navigate('Home');
+      navigation.replace('Home');
     }).catch(e=>console.log(e));
   }
 
